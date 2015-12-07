@@ -6,16 +6,15 @@ var shell = require('shelljs');
 var chalk = require('chalk');
 var npm = require('npm');
 
-exports.install = function (options) {
+exports.install = function (folder, options) {
     if (!shell.which('git')) {
         return console.log(chalk.red('Prerequisite not installed: git'));
     }
 
     if (options.type === true) {
-        return console.log(chalk.red('Wrong type'));
+        return console.log(chalk.red('Wrong type, only "develop" or "cms"'));
     }
 
-    var folder = options.folder;
     var source = 'https://github.com/knodeit/dolphin-' + options.type + '.git';
 
     console.log(chalk.green('Cloning source: %s into destination folder'), source);
@@ -44,8 +43,9 @@ exports.install = function (options) {
                 }
 
                 console.log();
+                console.log('   $ cd %s', folder);
                 console.log('   run the app:');
-                console.log('   $', grunted ? 'grunt' : 'node server');
+                console.log('   $', grunted ? 'grunt' : 'node dolphin');
             });
         });
     });
