@@ -1,0 +1,21 @@
+#!/usr/bin/env node
+
+'use strict';
+
+
+var program = require('commander');
+var _ = require('lodash');
+
+// set program version
+var version = require('../package').version;
+program.version(version, '-v, --version');
+
+program
+    .command('init <type> [options]', 'Create a Dolphin application in the current working directory')
+
+    .parse(process.argv);
+
+// print help with no args
+if (program.args.length < 1) {
+    program.help();
+}

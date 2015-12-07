@@ -1,0 +1,22 @@
+#!/usr/bin/env node
+
+'use strict';
+
+var cli = require('../cli');
+var program = require('commander');
+
+program
+    .description('Create a Dolphin application in the current working directory')
+    .usage('test')
+    .option('-b --branch <branch>', 'git branch')
+    .option('-f --folder <folder>', 'some path')
+    .option('-t --type <type>', 'type of application', /^(develop|cms)$/i)
+    .parse(process.argv);
+
+var options = {
+    branch: program.branch || 'master',
+    type: program.type || 'cms',
+    folder: program.folder || '.'
+};
+
+cli.install(options);
