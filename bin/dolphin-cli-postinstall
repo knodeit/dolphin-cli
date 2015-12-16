@@ -1,0 +1,12 @@
+#!/usr/bin/env node
+
+'use strict';
+
+var cli = require('../cli');
+var program = require('commander');
+
+program
+    .description('Postinstall bower and package dependencies')
+    .parse(process.argv);
+
+cli.postinstall();

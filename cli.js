@@ -5,8 +5,13 @@
 var shell = require('shelljs');
 var chalk = require('chalk');
 var npm = require('npm');
+var async = require('async');
+var PathUtil = require('path');
+var fs = require('fs');
+var bower = require('bower');
+var ModuleUtil = require('dolphin-core-utils').Module;
 
-exports.install = function (folder, options) {
+exports.init = function (folder, options) {
     if (!shell.which('git')) {
         return console.log(chalk.red('Prerequisite not installed: git'));
     }
@@ -25,28 +30,82 @@ exports.install = function (folder, options) {
         }
 
         shell.cd(folder);
-        shell.exec('git remote rename origin upstream', function (code) {
+        shell.exec('rm -rf ./.git*', function (code) {
             if (!code) {
                 console.log('   git remote upstream set');
                 console.log();
             }
         });
 
-        var grunted = shell.which('grunt');
-        npm.load(function (err, npm) {
-            console.log(chalk.green('   installing dependencies...'));
-            console.log();
-            npm.commands.install(function (err) {
+        var gulped = shell.which('gulp');
+        console.log('   install dependencies:');
+        console.log('     $ cd %s && npm install', folder);
+        console.log();
+        console.log('   run the app:');
+        console.log('     $', gulped ? 'gulp' : 'node server');
+        console.log();
+    });
+};
+
+exports.postinstall = function () {
+
+    function installPackage(source, callback) {
+        console.log(chalk.green(source));
+        console.log(chalk.green('Installing npm...'));
+
+        npm.load({
+            loglevel: 'error'
+        }, function (err, npm) {
+            npm.commands.install(source, [], function (err) {
                 if (err) {
-                    console.log(chalk.red('Error: npm install failed'));
-                    return console.error(err);
+                    console.log(chalk.red('Error: npm install failed..'));
+                    console.error(err);
+                    return callback(err);
                 }
 
-                console.log();
-                console.log('   $ cd %s', folder);
-                console.log('   run the app:');
-                console.log('   $', grunted ? 'grunt' : 'node dolphin');
+                if (!fs.existsSync(PathUtil.join(source, 'bower.json'))) {
+                    return callback();
+                }
+                console.log(chalk.green('Installing bower...'));
+
+                var count = source.replace(process.cwd(), '').split('/').length;
+                var prefix = './';
+                if (count > 0) {
+                    for (var i = 1; i < count; i++) {
+                        prefix = prefix + '../';
+                    }
+                }
+                bower.commands.install(undefined, undefined, {cwd: source, directory: prefix + 'bower_components', interactive: true}).on('error', function (err) {
+                    if (err) {
+                        console.log(chalk.red(source));
+                        console.log(chalk.red(err));
+                    }
+                    callback();
+                }).on('end', function () {
+                    console.log(' ');
+                    callback();
+                });
             });
         });
-    });
+    }
+
+    console.log(chalk.green('Installing Bower dependencies in root folder'));
+    bower.commands.install().on('error', function (err) {
+        console.log(chalk.red(err));
+        runLocalPackages();
+    }).on('end', runLocalPackages);
+
+    function runLocalPackages() {
+        console.log(chalk.green('Installing other packages'));
+        console.log(' ');
+
+        ModuleUtil.findLocalModules().then(function (files) {
+            var queue = async.queue(installPackage, 1);
+
+            for (var i in files) {
+                queue.push(files[i].source);
+            }
+        });
+    }
+
 };

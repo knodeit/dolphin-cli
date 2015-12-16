@@ -11,7 +11,7 @@ var version = require('../package').version;
 program.version(version, '-v, --version');
 
 program
-    .command('init <type> [options]', 'Create a Dolphin application in the current working directory')
+    .command('init [-type] [folder]', 'Create a Dolphin application in the current working directory. Arg. type(develop|cms) and folder are option')
 
     .parse(process.argv);
 
