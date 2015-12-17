@@ -30,19 +30,14 @@ exports.init = function (folder, options) {
         }
 
         shell.cd(folder);
-        shell.exec('rm -rf ./.git*', function (code) {
-            if (!code) {
-                console.log('   git remote upstream set');
-                console.log();
-            }
-        });
+        shell.exec('rm -rf ./.git*', function () {});
 
         var gulped = shell.which('gulp');
         console.log('   install dependencies:');
         console.log('     $ cd %s && npm install', folder);
         console.log();
         console.log('   run the app:');
-        console.log('     $', gulped ? 'gulp' : 'node server');
+        console.log('     $', gulped ? 'gulp' : 'node dolphin');
         console.log();
     });
 };
