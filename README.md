@@ -1,7 +1,7 @@
 ### Command line interface for Dolphin
 
 ### Installation
-Requres 
+Requires 
 
 ```npm install gulp -g```
 
