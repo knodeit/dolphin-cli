@@ -30,7 +30,7 @@ exports.init = function (folder, options) {
         }
 
         shell.cd(folder);
-        shell.exec('rm -rf ./.git*', function () {});
+        shell.exec('rm -rf ./.git/*', function () {});
 
         var gulped = shell.which('gulp');
         console.log('   install dependencies:');
