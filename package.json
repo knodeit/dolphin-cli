@@ -1,6 +1,6 @@
 {
     "name": "dolphin-cli",
-    "version": "0.2.2",
+    "version": "0.3.0",
     "preferGlobal": true,
     "description": "CLI for dolphin",
     "author": {
@@ -24,7 +24,6 @@
     "dependencies": {
         "chalk": "~1.1.1",
         "commander": "~2.9.0",
-        "lodash": "~3.10.1",
         "npm": "~3.5.1",
         "shelljs": "~0.5.3",
         "async": "~1.2.1",

@@ -4,7 +4,6 @@
 
 
 var program = require('commander');
-var _ = require('lodash');
 
 // set program version
 var version = require('../package').version;
